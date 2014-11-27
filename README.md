@@ -1,4 +1,4 @@
-### SlideMe Game
+# SlideMe Game
 
 ## Setup
 
