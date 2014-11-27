@@ -6,7 +6,7 @@ public class PlayState extends FlxState
 {
 	public void create()
 	{
-		
+		// Tiago is gay
 	}
 	
 	
