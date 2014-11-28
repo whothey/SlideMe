@@ -7,7 +7,6 @@ import org.flixel.FlxText;
 public class MainState extends FlxState 
 {
 	private FlxText logo;
-	private float _count;
 	
 	@Override
 	public void create()
