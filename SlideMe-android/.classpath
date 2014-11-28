@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SlideMe"/>
+	<classpathentry exported="true" kind="lib" path="/SlideMe/libs/gdx.jar" sourcepath="/SlideMe/libs/gdx-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/SlideMe/libs/gdx-freetype.jar" sourcepath="/SlideMe/libs/gdx-freetype-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/SlideMe/libs/flixel-core.jar" sourcepath="/SlideMe/libs/flixel-core-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/flixel-android.jar" sourcepath="libs/flixel-android-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/SlideMe/libs/tween-engine-api.jar" sourcepath="/SlideMe/libs/tween-engine-api-sources.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>
