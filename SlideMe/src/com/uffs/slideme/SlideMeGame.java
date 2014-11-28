@@ -6,6 +6,6 @@ public class SlideMeGame extends FlxGame
 {
 	public SlideMeGame()
 	{
-		super(400, 240, PlayState.class, 2, 50, 50, false);
+		super(240, 400, PlayState.class, 2, 50, 50, false);
 	}
 }
