@@ -19,7 +19,7 @@ public class MainState extends FlxState
 		logo.y = FlxG.height / 2 - logo.height / 2;
 		// logo.setAlpha(0); // Transparent
 		
-		FlxG.fade(0x000000, 3, new IFlxCamera(){@Override public void callback(){FlxG.switchState(new PlayState());}});
+		FlxG.fade(0x000000, 3, new IFlxCamera(){@Override public void callback(){FlxG.switchState(new MenuState());}});
 		
 		add(logo);
 	}
