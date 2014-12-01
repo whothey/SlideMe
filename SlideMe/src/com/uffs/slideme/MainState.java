@@ -3,6 +3,7 @@ package com.uffs.slideme;
 import org.flixel.FlxG;
 import org.flixel.FlxState;
 import org.flixel.FlxText;
+import org.flixel.event.IFlxCamera;
 
 public class MainState extends FlxState 
 {
@@ -18,7 +19,7 @@ public class MainState extends FlxState
 		logo.y = FlxG.height / 2 - logo.height / 2;
 		// logo.setAlpha(0); // Transparent
 		
-		FlxG.fade(0x000000, 3);
+		FlxG.fade(0x000000, 3, new IFlxCamera(){@Override public void callback(){FlxG.switchState(new PlayState());}});
 		
 		add(logo);
 	}
