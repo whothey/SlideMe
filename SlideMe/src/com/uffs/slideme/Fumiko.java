@@ -1,19 +1,21 @@
 package com.uffs.slideme;
 
-import org.flixel.FlxButton;
 import org.flixel.FlxG;
 import org.flixel.FlxSprite;
 import org.flixel.ui.FlxVirtualPad;
+import org.flixel.FlxButton;
 
 public class Fumiko extends FlxSprite
 {
 	protected String ImgFumiko = "player.png";
 	protected FlxVirtualPad _pad;
 	
-	public Fumiko(int x, int y)
+	public Fumiko(int x, int y, FlxVirtualPad pad)
 	{
 		super(x, y);
-		loadGraphic(ImgFumiko, true, true, 312, 24);
+		_pad = pad;
+		
+		loadGraphic(ImgFumiko, true, true, 28, 24);
 		
 		// Animations
 		addAnimation("idle", new int[]{0});
@@ -30,12 +32,12 @@ public class Fumiko extends FlxSprite
 		
 		// Movement
 		acceleration.x = 0;
-		/*if (FlxG.keys.RIGHT || _pad.buttonRight.status == FlxButton.PRESSED) {
+		if (FlxG.keys.RIGHT || _pad.buttonRight.status == FlxButton.PRESSED) {
 			setFacing(RIGHT);
 			acceleration.x += drag.x;
 		} else if (FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED) {
 			setFacing(LEFT);
 			acceleration.x -= drag.x;
-		}*/
+		}
 	}
 }
