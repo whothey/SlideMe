@@ -15,15 +15,17 @@ public class Fumiko extends FlxSprite
 		super(x, y);
 		_pad = pad;
 		
-		loadGraphic(ImgFumiko, true, true, 28, 24);
+		loadGraphic(ImgFumiko, true, true, 24, 31);
 		
 		// Animations
 		addAnimation("idle", new int[]{0});
-		addAnimation("walking", new int[]{0, 1, 2});
-		addAnimation("running", new int[]{3, 4, 5});
+		addAnimation("walking", new int[]{0, 1, 2}, 5, true);
+		addAnimation("running", new int[]{3, 4, 5}, 10, true);
 		addAnimation("jumping", new int[]{9, 10, 11, 12});
 		
 		play("idle");
+		
+		drag.x = 100;
 	}
 	
 	public void update()
@@ -31,13 +33,20 @@ public class Fumiko extends FlxSprite
 		super.update();
 		
 		// Movement
+		acceleration.y = 100; // Gravity
 		acceleration.x = 0;
 		if (FlxG.keys.RIGHT || _pad.buttonRight.status == FlxButton.PRESSED) {
 			setFacing(RIGHT);
+			velocity.x = 60;
 			acceleration.x += drag.x;
+			play("walking");
 		} else if (FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED) {
 			setFacing(LEFT);
+			velocity.x = -60;
 			acceleration.x -= drag.x;
+			play("walking");
+		} else {
+			play("idle");
 		}
 	}
 }
