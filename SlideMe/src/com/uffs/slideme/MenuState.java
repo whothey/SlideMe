@@ -1,6 +1,7 @@
 package com.uffs.slideme;
 
 import org.flixel.*;
+
 import org.flixel.event.IFlxButton;
 
 public class MenuState extends FlxState {
@@ -15,23 +16,24 @@ public class MenuState extends FlxState {
 	@Override
 	public void create() {
 		
-		FlxG.debug = true;
-				
+		FlxG.shake();
+		FlxG.vibrate(5);
+		
 		backgnd = new FlxSprite(0,0).loadGraphic("background.png", false, false, FlxG.width, FlxG.height);
 		backgnd.scale = new FlxPoint(2,2);
 		backgnd.setOriginToCorner();
 		add(backgnd);
-		
-		FlxG.shake();
 		
 		title = new FlxText(FlxG.width/2 - 70, FlxG.height/5 ,140, "SlideMe");
 		title.setSize(30);
 		title.setAlignment("center");
 		add(title);
 		
-		footer = new FlxText(FlxG.width/2 - 70, FlxG.height - 40, 140, "Developed by:\nTsukini");
+		footer = new FlxText(0,0, 100, "Developed by:\nTsukini");
+		footer.y = FlxG.height - footer.height;
+		footer.x = FlxG.width/2 - footer.width/2;
 		footer.setColor(0xD3D3D3);
-		footer.setSize(12);
+		//footer.setSize(10);
 		footer.setAlignment("center");
 		add(footer);
 		
@@ -57,5 +59,15 @@ public class MenuState extends FlxState {
 	{
 		FlxG.switchState(new CreditsState());
 	}
+	/*
+	public void destroy(){
+		super.destroy();
+		backgnd.destroy();
+		title.destroy();
+		footer.destroy();
+		btnPlay.destroy();
+		btnCredits.destroy();
+	}
+	*/
 
 }
