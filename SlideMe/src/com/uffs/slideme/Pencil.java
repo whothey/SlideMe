@@ -5,12 +5,8 @@ import org.flixel.*;
 public class Pencil extends FlxSprite {
 	
 	private float velocidade = 200;
-	private static int number = 0;
 	
 	public Pencil(){
-		number++;
-		FlxG.log(number);
-		
 		loadGraphic("pencil_sheet.png", true, false, 45, 24);
 				
 		addAnimation("right", new int[] {0});
