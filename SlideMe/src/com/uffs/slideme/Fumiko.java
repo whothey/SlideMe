@@ -28,33 +28,57 @@ public class Fumiko extends FlxSprite
 		addAnimation("idle", new int[]{0});
 		addAnimation("walking", new int[]{0, 1, 2}, 5, true);
 		addAnimation("running", new int[]{3, 4, 5}, 10, true);
-		addAnimation("jumping", new int[]{9, 10, 11, 12});
+		addAnimation("jumping", new int[]{9, 10, 11, 12}, 4, true);
+		addAnimation("sliding", new int[]{12});
 		
 		play("idle");
 		
-		drag.x = 100;
+		drag.x = 150;
+		drag.y = 60;
+	}
+	
+	public boolean isSliding()
+	{
+		if ((FlxG.keys.RIGHT || _pad.buttonRight.status == FlxButton.PRESSED) ||
+			(FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED)   ||
+			(FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED && isTouching(DOWN)))
+			return false;
 		
+		return true;
 	}
 	
 	public void update()
 	{
 		super.update();
 		
+		// Animation Control
+		if (_curAnim.name == "jumping" && !isTouching(DOWN)) {
+			play("jumping");
+		} else if (velocity.x == 0) {
+			play("idle");
+		} else if (isSliding()) {
+			play("sliding");
+		}
+		
 		// Movement
 		acceleration.y = 100; // Gravity
 		acceleration.x = 0;
 		if (FlxG.keys.RIGHT || _pad.buttonRight.status == FlxButton.PRESSED) {
 			setFacing(RIGHT);
-			velocity.x = 60;
+			velocity.x = 100;
 			acceleration.x += drag.x;
-			play("walking");
+			play("running");
 		} else if (FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED) {
 			setFacing(LEFT);
-			velocity.x = -60;
+			velocity.x = -100;
 			acceleration.x -= drag.x;
-			play("walking");
-		} else {
-			play("idle");
+			play("running");
+		}
+		
+		// Jumps
+		if (FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED && isTouching(DOWN)) {
+			play("jumping");
+			velocity.y = -60;
 		}
 		
 		if (shootTime > 0)

@@ -16,7 +16,7 @@ public class PlayState extends FlxState
 	{
 		int i;
 		
-		_pad = new FlxVirtualPad(FlxVirtualPad.DPAD_FULL, FlxVirtualPad.A_B);
+    	_pad = new FlxVirtualPad(FlxVirtualPad.LEFT_RIGHT, FlxVirtualPad.A_B);
 		_pad.setAlpha((float) 0.5);
 		
 		player = new Fumiko(0, 0, _pad);
