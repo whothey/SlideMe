@@ -28,7 +28,8 @@ public class Fumiko extends FlxSprite
 		addAnimation("idle", new int[]{0});
 		addAnimation("walking", new int[]{0, 1, 2}, 5, true);
 		addAnimation("running", new int[]{3, 4, 5}, 10, true);
-		addAnimation("jumping", new int[]{9, 10, 11, 12}, 4, true);
+		addAnimation("jumping", new int[]{9, 10}, 2);
+		addAnimation("falling", new int[]{11, 12}, 2);
 		addAnimation("sliding", new int[]{12});
 		
 		play("idle");
@@ -52,12 +53,18 @@ public class Fumiko extends FlxSprite
 		super.update();
 		
 		// Animation Control
-		if (_curAnim.name == "jumping" && !isTouching(DOWN)) {
+		if (velocity.y < 0) {
 			play("jumping");
+		} else if(velocity.y > 0) {
+			play("falling");
 		} else if (velocity.x == 0) {
 			play("idle");
 		} else if (isSliding()) {
 			play("sliding");
+		} else if (velocity.x != 0) {
+			play("running");
+		} else {
+			play("idle");
 		}
 		
 		// Movement
@@ -67,17 +74,14 @@ public class Fumiko extends FlxSprite
 			setFacing(RIGHT);
 			velocity.x = 100;
 			acceleration.x += drag.x;
-			play("running");
 		} else if (FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED) {
 			setFacing(LEFT);
 			velocity.x = -100;
 			acceleration.x -= drag.x;
-			play("running");
 		}
 		
 		// Jumps
-		if (FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED && isTouching(DOWN)) {
-			play("jumping");
+		if ((FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED) && isTouching(DOWN)) {
 			velocity.y = -60;
 		}
 		
