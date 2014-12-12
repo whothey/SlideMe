@@ -5,9 +5,9 @@ import org.flixel.*;
 public class Pencil extends FlxSprite {
 	
 	private float velocidade = 200;
-	private static int number = 0;
 	
 	public Pencil(){
+
 		number++;
 		FlxG.log(number);
 		
