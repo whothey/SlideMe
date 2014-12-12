@@ -11,10 +11,11 @@ public class Pencil extends FlxSprite {
 		number++;
 		FlxG.log(number);
 		
-		loadGraphic("pencil_sheet.png", true, false, 45, 24);
+		loadGraphic("pencil.png", false, true, 45, 24);
+		scale = new FlxPoint(0.5f, 0.5f);
+		setOriginToCorner();
+		centerOffsets();
 				
-		addAnimation("right", new int[] {0});
-		addAnimation("left", new int[] {1});
 		kill();
 	}
 	
@@ -30,10 +31,11 @@ public class Pencil extends FlxSprite {
 	public void shoot(FlxPoint point, int direction){
 		super.reset(point.x, point.y);
 		setSolid(true);
+		setFacing(direction);
 		
-		switch (direction) {
-			case RIGHT: play("right"); velocity.x = velocidade; break;
-			case LEFT: play("left"); velocity.x = -velocidade; break;
+		switch (getFacing()) {
+			case RIGHT: velocity.x = velocidade; break;
+			case LEFT: velocity.x = -velocidade; break;
 		}
 		
 	}
