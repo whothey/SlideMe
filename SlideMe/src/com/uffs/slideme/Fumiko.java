@@ -13,7 +13,6 @@ public class Fumiko extends FlxSprite
 	protected String ImgFumiko = "player.png";
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
-		
 	protected boolean justShoot = false;
 	protected float shootTime;
 	
@@ -21,7 +20,7 @@ public class Fumiko extends FlxSprite
 	{
 		super(x, y);
 		_pad = pad;
-		
+				
 		loadGraphic(ImgFumiko, true, true, 24, 31);
 		
 		// Animations
@@ -32,6 +31,8 @@ public class Fumiko extends FlxSprite
 		addAnimation("sliding", new int[]{12});
 		
 		play("idle");
+		
+		//makeGraphic((int)width, (int)height, 0xffff00ff);
 		
 		drag.x = 150;
 		drag.y = 60;
@@ -51,6 +52,9 @@ public class Fumiko extends FlxSprite
 	{
 		super.update();
 		
+		
+		
+				
 		// Animation Control
 		if (_curAnim.name == "jumping" && !isTouching(DOWN)) {
 			play("jumping");
@@ -67,18 +71,21 @@ public class Fumiko extends FlxSprite
 			setFacing(RIGHT);
 			velocity.x = 100;
 			acceleration.x += drag.x;
-			play("running");
+			if (isTouching(DOWN))
+				play("running");
 		} else if (FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED) {
 			setFacing(LEFT);
 			velocity.x = -100;
 			acceleration.x -= drag.x;
-			play("running");
+			if (isTouching(DOWN))
+				play("running");
 		}
 		
 		// Jumps
 		if (FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED && isTouching(DOWN)) {
 			play("jumping");
 			velocity.y = -60;
+			
 		}
 		
 		if (shootTime > 0)
@@ -95,13 +102,16 @@ public class Fumiko extends FlxSprite
 	}
 	
 	private void shoot(){
-		Pencil bala;
-		bala = (Pencil)((PlayState)FlxG.getState() ).getBullet().getFirstAvailable();
+		Pencil bullet;
+		bullet = (Pencil)((PlayState)FlxG.getState()).getBullet().getFirstAvailable();
 		
-		if (bala != null){
-			bala.shoot(new FlxPoint(x+width/2, y+height/2), getFacing());
+		if (bullet != null){
+			if (getFacing() == LEFT)
+				bullet.shoot(new FlxPoint(getMidpoint().x-width, getMidpoint().y), getFacing());
+			else
+				bullet.shoot(getMidpoint(), getFacing());
 			justShoot = true;
-			shootTime = 0.2f;
+			shootTime = 0.4f;
 		}
 		
 	}
