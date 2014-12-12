@@ -20,7 +20,7 @@ public class PlayState extends FlxState
 		int i;
 		
 		// Setup Stuff
-    	_pad = new FlxVirtualPad(FlxVirtualPad.LEFT_RIGHT, FlxVirtualPad.A_B);
+		_pad = new FlxVirtualPad(FlxVirtualPad.LEFT_RIGHT, FlxVirtualPad.A_B);
 		_pad.setAlpha((float) 0.5);
 		
 		player = new Fumiko(0, 0, _pad);
@@ -33,12 +33,16 @@ public class PlayState extends FlxState
 		Coin coin = (Coin) _coins.recycle(Coin.class);
 		coin.reset(100, FlxG.height - 80);
 		
+		// Setup Camera and Screen Following
+		FlxG.camera.follow(player);
+		FlxG.camera.deadzone = new FlxRect(FlxG.width / 2, FlxG.height / 2, 0, 0);
+		
 		bullets = new FlxGroup();
 		for (i=0; i<20; i++){
 			bullets.add(new Pencil());
 		}
-		add(bullets);
 		
+		add(bullets);
 		add(box);
 		add(_coins);
 		add(player);
@@ -46,7 +50,7 @@ public class PlayState extends FlxState
 		// Add the pad for last, so it will be in the top-most layer
 		add(_pad);
 	}
-	
+
 	@Override
 	public void update()
 	{
@@ -55,7 +59,8 @@ public class PlayState extends FlxState
 		FlxG.collide(player, box);
 		
 		// Collecting Coins
-		FlxG.overlap(_coins, player, new IFlxCollision() {
+		FlxG.overlap(_coins, player, new IFlxCollision()
+		{
 			@Override
 			public void callback(FlxObject coin, FlxObject player) {
 				coin.kill();
