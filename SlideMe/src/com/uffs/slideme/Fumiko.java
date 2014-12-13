@@ -2,20 +2,16 @@ package com.uffs.slideme;
 
 import org.flixel.FlxG;
 import org.flixel.FlxGroup;
-import org.flixel.FlxSprite;
 import org.flixel.ui.FlxVirtualPad;
 import org.flixel.FlxButton;
 import org.flixel.FlxPoint;
 
 
-public class Fumiko extends FlxSprite
+public class Fumiko extends Mob
 {	
 	protected String ImgFumiko = "player.png";
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
-	
-	protected int maxLife = 100;
-	protected int life = 100;
 	
 	protected boolean justShoot = false;
 	protected float shootTime;
@@ -122,17 +118,4 @@ public class Fumiko extends FlxSprite
 			shootTime = 0.4f;
 		}
 	}
-	
-	// Life handling
-	public int getLife() { return life; }
-	public void setLife(int l) { life = l; }
-	public void reduceLife(int l) { life -= l; }
-	
-	public void boostLife(int l) {
-		life += l;
-		if (life > maxLife) life = maxLife;
-	}
-	
-	public int getMaxLife() { return maxLife; }
-	public void setMaxLife(int m) { maxLife = m; }
 }
