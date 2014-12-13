@@ -9,10 +9,14 @@ import org.flixel.FlxPoint;
 
 
 public class Fumiko extends FlxSprite
-{
+{	
 	protected String ImgFumiko = "player.png";
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
+	
+	protected int maxLife = 100;
+	protected int life = 100;
+	
 	protected boolean justShoot = false;
 	protected float shootTime;
 	
@@ -20,7 +24,7 @@ public class Fumiko extends FlxSprite
 	{
 		super(x, y);
 		_pad = pad;
-				
+
 		loadGraphic(ImgFumiko, true, true, 24, 31);
 		
 		// Animations
@@ -32,8 +36,6 @@ public class Fumiko extends FlxSprite
 		addAnimation("sliding", new int[]{12});
 		
 		play("idle");
-		
-		//makeGraphic((int)width, (int)height, 0xffff00ff);
 		
 		drag.x = 150;
 		drag.y = 60;
@@ -52,10 +54,7 @@ public class Fumiko extends FlxSprite
 	public void update()
 	{
 		super.update();
-		
-		
-		
-				
+
 		// Animation Control
 		if (velocity.y < 0) {
 			play("jumping");
@@ -122,6 +121,18 @@ public class Fumiko extends FlxSprite
 			justShoot = true;
 			shootTime = 0.4f;
 		}
-		
 	}
+	
+	// Life handling
+	public int getLife() { return life; }
+	public void setLife(int l) { life = l; }
+	public void reduceLife(int l) { life -= l; }
+	
+	public void boostLife(int l) {
+		life += l;
+		if (life > maxLife) life = maxLife;
+	}
+	
+	public int getMaxLife() { return maxLife; }
+	public void setMaxLife(int m) { maxLife = m; }
 }
