@@ -11,8 +11,10 @@ public class PlayState extends FlxState
 	private FlxVirtualPad _pad;
 	private FlxGroup _coins, bullets, hud, lives;
 	private Fumiko player;
-	private FlxSprite box, fumikoHud, lifeBar, backGround;
+	private FlxSprite box, fumikoHud, lifeBar, background;
 	private FlxText score;
+	private FlxGroup _level;
+	private String _terrain = "terrain.png";
 	
 	@Override
 	public void create()
@@ -30,9 +32,8 @@ public class PlayState extends FlxState
 		box.makeGraphic(400, 30);
 		box.immovable = true;
 		
-		_coins = new FlxGroup();
-		Coin coin = (Coin) _coins.recycle(Coin.class);
-		coin.reset(100, FlxG.height - 80);
+		_level = new FlxGroup();
+		generateLevel();
 		
 		// Setup Camera and Screen Following
 		FlxG.camera.follow(player);
@@ -43,8 +44,8 @@ public class PlayState extends FlxState
 			bullets.add(new Pencil());
 		}
 		
-		backGround = new FlxSprite(0,0).loadGraphic("background.png");
-		backGround.scrollFactor = new FlxPoint(0,0);
+		background = new FlxSprite(0,0).loadGraphic("background.png");
+		background.scrollFactor = new FlxPoint(0,0);
 		
 		// Setup HUD
 		hud = new FlxGroup();
@@ -74,6 +75,7 @@ public class PlayState extends FlxState
 		add(box);
 		add(_coins);
 		add(player);
+		add(_level);
 		add(hud);
 				
 		// Add the pad for last, so it will be in the top-most layer
@@ -92,8 +94,10 @@ public class PlayState extends FlxState
 		{
 			@Override
 			public void callback(FlxObject coin, FlxObject player) {
-				FlxG.score ++;
-				coin.kill();
+				if (coin instanceof Coin && player instanceof Fumiko) {
+					FlxG.score ++;
+					coin.kill();
+				}
 			}
 		});
 		
@@ -106,8 +110,10 @@ public class PlayState extends FlxState
 		return bullets;
 	}
 	
-	public void generateLevel()
+	private void generateLevel()
 	{
-		
+		FlxTileblock t = new FlxTileblock(0, 0, 32, 32);
+		t.loadGraphic(_terrain);
+		_level.add(t);
 	}
 }
