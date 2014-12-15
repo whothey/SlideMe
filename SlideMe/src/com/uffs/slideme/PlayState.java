@@ -11,7 +11,7 @@ public class PlayState extends FlxState
 	private FlxVirtualPad _pad;
 	private FlxGroup _coins, bullets, hud, lives;
 	private Fumiko player;
-	private FlxSprite box, fumikoHud, lifeBar;
+	private FlxSprite box, fumikoHud, lifeBar, backGround;
 	private FlxText score;
 	
 	@Override
@@ -43,6 +43,9 @@ public class PlayState extends FlxState
 			bullets.add(new Pencil());
 		}
 		
+		backGround = new FlxSprite(0,0).loadGraphic("background.png");
+		backGround.scrollFactor = new FlxPoint(0,0);
+		
 		// Setup HUD
 		hud = new FlxGroup();
 		fumikoHud = new FlxSprite(2,2).loadGraphic("fumiko_hud.png");
@@ -52,7 +55,7 @@ public class PlayState extends FlxState
 		
 		
 		for (i = 0; i<player.getMaxLives(); i++){
-//			hud.add(new Heart(fumikoHud.width+2 + (13*i), 3));
+			hud.add(new Heart((fumikoHud.width+2)*2 + (13*i), 3));
 		}
 		
 		lifeBar = new FlxSprite((fumikoHud.width+2)*2, 20).makeGraphic(50, 10, 0xffff0000);
