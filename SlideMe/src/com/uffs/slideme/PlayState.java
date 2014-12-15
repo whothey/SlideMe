@@ -34,10 +34,12 @@ public class PlayState extends FlxState
 		
 		_level = new FlxGroup();
 		generateLevel();
+		_level.setAll("immovable", true);
 		
 		// Setup Camera and Screen Following
 		FlxG.camera.follow(player);
-		FlxG.camera.deadzone = new FlxRect(FlxG.width / 2, FlxG.height / 2, 0, 0);
+		// TOP_DOWN without "x" scrolling 
+		FlxG.camera.deadzone = new FlxRect(0, FlxG.height / 2, FlxG.width, 0);
 		
 		bullets = new FlxGroup();
 		for (i=0; i<20; i++){
@@ -88,6 +90,7 @@ public class PlayState extends FlxState
 		super.update();
 		
 		FlxG.collide(player, box);
+		FlxG.collide(player, _level);
 		
 		// Collecting Coins
 		FlxG.overlap(_coins, player, new IFlxCollision()
@@ -110,10 +113,17 @@ public class PlayState extends FlxState
 		return bullets;
 	}
 	
-	private void generateLevel()
+	protected void generateLevel()
 	{
-		FlxTileblock t = new FlxTileblock(0, 0, 32, 32);
-		t.loadGraphic(_terrain);
+		FlxTileblock t = new FlxTileblock(0, FlxG.height - 62, 32, 32);
+		t.loadTiles(_terrain);
+		
 		_level.add(t);
+	}
+	
+	protected void generateStepLine(int x, int y)
+	{
+		FlxTileblock t = new FlxTileblock(0, FlxG.height - 62, 32, 32);
+		t.loadTiles(_terrain);
 	}
 }
