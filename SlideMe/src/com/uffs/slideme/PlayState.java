@@ -55,7 +55,7 @@ public class PlayState extends FlxState
 		
 		
 		for (i = 0; i<player.getMaxLives(); i++){
-			hud.add(new Heart((fumikoHud.width+2)*2 + (13*i), 3));
+			// hud.add(new Heart((fumikoHud.width+2)*2 + (13*i), 3));
 		}
 		
 		lifeBar = new FlxSprite((fumikoHud.width+2)*2, 20).makeGraphic(50, 10, 0xffff0000);
@@ -104,5 +104,10 @@ public class PlayState extends FlxState
 	
 	public FlxGroup getBullet(){
 		return bullets;
+	}
+	
+	public void generateLevel()
+	{
+		
 	}
 }
