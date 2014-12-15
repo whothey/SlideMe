@@ -9,7 +9,7 @@ import org.flixel.FlxPoint;
 
 public class Fumiko extends Mob
 {	
-	protected String ImgFumiko = "player.png";
+	protected String ImgFumiko = "player_shoot.png";
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
 	
@@ -30,6 +30,7 @@ public class Fumiko extends Mob
 		addAnimation("jumping", new int[]{9, 10}, 2);
 		addAnimation("falling", new int[]{11, 12}, 2);
 		addAnimation("sliding", new int[]{12});
+		addAnimation("shoot", new int[]{13,14,15,16,17},5, true);
 		
 		play("idle");
 		
@@ -89,13 +90,12 @@ public class Fumiko extends Mob
 		// Jumps
 		if ((FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED) && isTouching(DOWN)) {
 			velocity.y = -60;
-			
 		}
 		
+		// Shooting
 		if (shootTime > 0)
 			shootTime -= FlxG.elapsed;
 		
-		//Shooting
 		if (FlxG.keys.A || _pad.buttonA.status == FlxButton.PRESSED){
 			if (!justShoot)
 				shoot();
@@ -108,6 +108,7 @@ public class Fumiko extends Mob
 	private void shoot(){
 		Pencil bullet;
 		bullet = (Pencil)((PlayState)FlxG.getState()).getBullet().getFirstAvailable();
+		play("shoot", true);
 		
 		if (bullet != null){
 			if (getFacing() == LEFT)

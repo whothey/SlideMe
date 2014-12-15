@@ -8,9 +8,6 @@ public class Pencil extends FlxSprite {
 	
 	public Pencil(){
 
-		number++;
-		FlxG.log(number);
-		
 		loadGraphic("pencil.png", false, true, 45, 24);
 		scale = new FlxPoint(0.5f, 0.5f);
 		setOriginToCorner();
