@@ -44,6 +44,8 @@ public class PlayState extends FlxState
 		}
 		
 		backGround = new FlxSprite(0,0).loadGraphic("background.png");
+		backGround.scale = new FlxPoint(2,2);
+		backGround.setOriginToCorner();
 		backGround.scrollFactor = new FlxPoint(0,0);
 		
 		// Setup HUD
@@ -70,6 +72,7 @@ public class PlayState extends FlxState
 		hud.add(score);
 		hud.setAll("scrollFactor", new FlxPoint(0,0));
 				
+		add(backGround);
 		add(bullets);
 		add(box);
 		add(_coins);
