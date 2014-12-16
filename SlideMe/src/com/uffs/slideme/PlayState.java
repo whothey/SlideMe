@@ -1,6 +1,7 @@
 package com.uffs.slideme;
 
 import org.flixel.*;
+import java.util.Random;
 import org.flixel.event.IFlxCollision;
 import org.flixel.ui.FlxVirtualPad;
 
@@ -74,7 +75,7 @@ public class PlayState extends FlxState
 		hud.setAll("scrollFactor", new FlxPoint(0,0));
 				
 		add(bullets);
-		add(box);
+		// add(box);
 		add(_coins);
 		add(player);
 		add(_level);
@@ -115,15 +116,38 @@ public class PlayState extends FlxState
 	
 	protected void generateLevel()
 	{
-		FlxTileblock t = new FlxTileblock(0, FlxG.height - 62, 32, 32);
-		t.loadTiles(_terrain);
-		
-		_level.add(t);
+		generateStepLine(0, FlxG.height, 2);
 	}
 	
-	protected void generateStepLine(int x, int y)
+	/**
+	 * We can put up to 12 tiles of step, so we need to generate where from these 12 tiles
+	 * will have blank spaces
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	protected void generateStepLine(int x, int y, int emptySpaces)
 	{
-		FlxTileblock t = new FlxTileblock(0, FlxG.height - 62, 32, 32);
-		t.loadTiles(_terrain);
+		Random rnd = new Random();
+		int[] emptyPlaces = new int[emptySpaces];
+		
+		for (int i = 0; i < emptySpaces; i++)
+			emptyPlaces[i] = rnd.nextInt(12);
+		
+		for (int i = 0; i < 12; i++) {
+			boolean isEmptySpace = false;
+			
+			for (int j = 0; j < emptyPlaces.length; j++) {
+				if (emptyPlaces[j] == i) isEmptySpace = true;
+			}
+			
+			if (isEmptySpace) continue;
+			
+			FlxTileblock t = new FlxTileblock(x + (i * 32), y, 32, 32);
+			t.loadTiles(_terrain);
+			_level.add(t);
+			
+		}
+		
 	}
 }
