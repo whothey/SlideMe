@@ -13,7 +13,7 @@ public class Fumiko extends Mob
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
 	
-	protected boolean justShoot = false;
+	protected boolean justShoot = false, isShooting;
 	protected float shootTime;
 	
 	public Fumiko(int x, int y, FlxVirtualPad pad)
@@ -34,7 +34,7 @@ public class Fumiko extends Mob
 		
 		play("idle");
 		
-		drag.x = 150;
+		drag.x = 200;
 		drag.y = 60;
 	}
 	
@@ -54,17 +54,32 @@ public class Fumiko extends Mob
 
 		// Animation Control
 		if (velocity.y < 0) {
-			play("jumping");
+			if (isShooting)
+				play("shoot");
+			else
+				play("jumping");
 		} else if(velocity.y > 0) {
-			play("falling");
+			if (isShooting)
+				play("shoot");
+			else
+				play("falling");
 		} else if (velocity.x == 0) {
-			play("idle");
+			if (isShooting)
+				play("shoot");
+			else
+				play("idle");
 		} else if (isSliding()) {
 			play("sliding");
 		} else if (velocity.x != 0) {
-			play("running");
-		} else {
-			play("idle");
+			if (isShooting)
+				play("shoot");
+			else
+				play("running");
+		} else if (isTouching(DOWN)){
+			if (isShooting)
+				play("shoot");
+			else
+				play("idle");
 		}
 		
 		// Movement
@@ -93,10 +108,14 @@ public class Fumiko extends Mob
 		}
 		
 		// Shooting
-		if (shootTime > 0)
+		if (shootTime > 0){
 			shootTime -= FlxG.elapsed;
+		}
+		if (shootTime<=0){
+			isShooting = false;
+		}
 		
-		if (FlxG.keys.A || _pad.buttonA.status == FlxButton.PRESSED){
+		if ((FlxG.keys.A || _pad.buttonA.status == FlxButton.PRESSED)){
 			if (!justShoot)
 				shoot();
 			else
@@ -107,8 +126,8 @@ public class Fumiko extends Mob
 	
 	private void shoot(){
 		Pencil bullet;
-		bullet = (Pencil)((PlayState)FlxG.getState()).getBullet().getFirstAvailable();
-		play("shoot", true);
+		bullet = (Pencil)( (PlayState)FlxG.getState() ).getBullet().getFirstAvailable();
+		isShooting = true;
 		
 		if (bullet != null){
 			if (getFacing() == LEFT)

@@ -8,11 +8,7 @@ public class Pencil extends FlxSprite {
 	
 	public Pencil(){
 
-		loadGraphic("pencil.png", false, true, 45, 24);
-		scale = new FlxPoint(0.5f, 0.5f);
-		setOriginToCorner();
-		centerOffsets();
-				
+		loadGraphic("pencil.png", false, true, 18, 4);
 		kill();
 	}
 	
@@ -34,6 +30,5 @@ public class Pencil extends FlxSprite {
 			case RIGHT: velocity.x = velocidade; break;
 			case LEFT: velocity.x = -velocidade; break;
 		}
-		
 	}
 }
