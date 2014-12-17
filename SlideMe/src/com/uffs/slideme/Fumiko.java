@@ -83,7 +83,7 @@ public class Fumiko extends Mob
 		}
 		
 		// Movement
-		acceleration.y = 100; // Gravity
+		acceleration.y = 150; // Gravity
 		acceleration.x = 0;
 		if (FlxG.keys.RIGHT || _pad.buttonRight.status == FlxButton.PRESSED) {
 			setFacing(RIGHT);
@@ -104,7 +104,7 @@ public class Fumiko extends Mob
 		
 		// Jumps
 		if ((FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED) && isTouching(DOWN)) {
-			velocity.y = -60;
+			velocity.y = -100;
 		}
 		
 		// Shooting
