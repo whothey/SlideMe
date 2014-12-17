@@ -18,8 +18,8 @@ public class Heart extends FlxSprite {
 	
 	public void reduceLives(){
 		if (state == "full")
-			state = "half";
-		else if (state == "half")
+//			state = "half";
+//		else if (state == "half")
 			state = "empty";
 	}
 	
