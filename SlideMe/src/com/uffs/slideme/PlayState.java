@@ -10,12 +10,12 @@ public class PlayState extends FlxState
 	private FlxVirtualPad _pad;
 	private FlxGroup _coins, bullets;
 	private Fumiko player;
-	private FlxSprite box, backGround;
+	private FlxSprite box, background;
 	private Hud hud;
 	private Ant enemy;
 	private FlxGroup _level;
 	private String _terrain = "terrain.png";
-	
+		
 	@Override
 	public void create()
 	{
@@ -29,7 +29,8 @@ public class PlayState extends FlxState
 		_pad.setAlpha((float) 0.5);
 		
 		player = new Fumiko(0, 0, _pad);
-		player.setMaxLives(3);
+		player.setMaxLives(4);
+		player.setLives(2);
 			
 		box = new FlxSprite(0, FlxG.height - 30);
 		box.makeGraphic(400, 30);
@@ -55,10 +56,10 @@ public class PlayState extends FlxState
 		// Setup HUD
 		hud = new Hud();
 		
-		add(backGround);
+		add(background);
 		add(bullets);
-		// add(box);
 		add(_coins);
+		// add(box);
 		add(player);
 		add(_level);
 		add(hud);
@@ -72,7 +73,7 @@ public class PlayState extends FlxState
 	{
 		super.update();
 		
-		FlxG.collide(player, box);
+		//FlxG.collide(player, box);
 		FlxG.collide(player, _level);
 		
 		// Collecting Coins
@@ -82,6 +83,7 @@ public class PlayState extends FlxState
 			public void callback(FlxObject coin, FlxObject player) {
 				if (coin instanceof Coin && player instanceof Fumiko) {
 					FlxG.score ++;
+					fumikoHurt(10);
 					coin.kill();
 				}
 			}
@@ -91,15 +93,8 @@ public class PlayState extends FlxState
 		if( FlxG.collide(player, enemy) && !player.getFlickering()){
 			fumikoHurt(20);
 		}
-	}
-	
-	public FlxGroup getBullet(){ return bullets; }
-	
-	public Fumiko getPlayer(){ return player; }
-	
-	private void fumikoHurt(int damage){
-		player.hurt(damage);
 		
+		// Reducing Lives
 		if (player.getHealth() == 0 ){
 			player.kill();
 			player.reset(player.x, player.y);
@@ -110,6 +105,27 @@ public class PlayState extends FlxState
 			else
 				player.reduceLives(1);
 		}
+	}
+	
+	public FlxGroup getBullet(){ return bullets; }
+	
+	public Fumiko getPlayer(){ return player; }
+	
+	private void fumikoHurt(int damage){
+		player.hurt(damage);
+		
+		/*
+		if (player.getHealth() == 0 ){
+			player.kill();
+			player.reset(player.x, player.y);
+			player.flicker(2);
+						
+			if (player.getLives() == 1)
+				gameOver();
+			else
+				player.reduceLives(1);
+		}
+		*/
 	}
 	
 	private void gameOver(){
