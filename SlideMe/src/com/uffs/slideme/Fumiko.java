@@ -53,33 +53,22 @@ public class Fumiko extends Mob
 		super.update();
 
 		// Animation Control
-		if (velocity.y < 0) {
-			if (isShooting)
-				play("shoot");
-			else
+		if (isShooting){
+			play("shoot");
+		}else{
+			if (velocity.y < 0) {
 				play("jumping");
-		} else if(velocity.y > 0) {
-			if (isShooting)
-				play("shoot");
-			else
+			} else if(velocity.y > 0) {
 				play("falling");
-		} else if (velocity.x == 0) {
-			if (isShooting)
-				play("shoot");
-			else
+			} else if (velocity.x == 0) {
 				play("idle");
-		} else if (isSliding()) {
-			play("sliding");
-		} else if (velocity.x != 0) {
-			if (isShooting)
-				play("shoot");
-			else
+			} else if (isSliding()) {
+				play("sliding");
+			} else if (velocity.x != 0) {
 				play("running");
-		} else if (isTouching(DOWN)){
-			if (isShooting)
-				play("shoot");
-			else
+			} else if (isTouching(DOWN)){
 				play("idle");
+			}
 		}
 		
 		// Movement
