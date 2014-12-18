@@ -17,7 +17,7 @@ public class MenuState extends FlxState {
 	public void create() {
 		
 		FlxG.shake();
-		FlxG.vibrate(5);
+
 		
 		backgnd = new FlxSprite(0,0).loadGraphic("background.png", false, false, FlxG.width, FlxG.height);
 		backgnd.scale = new FlxPoint(2,2);
@@ -39,7 +39,7 @@ public class MenuState extends FlxState {
 		
 		btnPlay = new FlxButton(0, FlxG.height/2, "Play",new IFlxButton(){@Override public void callback(){ClickPlay();}});
 		btnPlay.x = FlxG.width/2 - btnPlay.width/2;
-		btnPlay.label.setColor(0x00000666);
+		//btnPlay.label.setColor(0x00000666);
 		btnPlay.label.setAlignment("center");
 		add(btnPlay);
 		

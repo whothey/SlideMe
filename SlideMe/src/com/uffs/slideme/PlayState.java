@@ -6,15 +6,15 @@ import java.util.Random;
 import org.flixel.event.IFlxCollision;
 import org.flixel.ui.FlxVirtualPad;
 
-
-
 public class PlayState extends FlxState
 {
 	private FlxVirtualPad _pad;
-	private FlxGroup _coins, bullets, hud, lives;
+	private FlxGroup _coins, bullets, lives, _enemies;
 	private Fumiko player;
 	private FlxSprite fumikoHud, lifeBar, background;
 	private FlxText score;
+	private FlxSprite backGround;
+	private Hud hud;
 	private FlxGroup _level;
 	private String _terrain = "terrain.png";
 	
@@ -28,7 +28,7 @@ public class PlayState extends FlxState
 	public void create()
 	{
 		int i;
-		
+
 		// Starts at bottom of the screen
 		_lastGeneratedY = FlxG.height;
 		_lastGeneratedX = 0;
@@ -66,11 +66,7 @@ public class PlayState extends FlxState
 		background.scrollFactor = new FlxPoint(0,0);
 		
 		// Setup HUD
-		hud = new FlxGroup();
-		fumikoHud = new FlxSprite(2,2).loadGraphic("fumiko_hud.png");
-		fumikoHud.scale = new FlxPoint(2,2);
-		fumikoHud.setOriginToCorner();
-		fumikoHud.centerOffsets();
+		hud = new Hud();
 		
 		for (i = 0; i<player.getMaxLives(); i++){
 			// hud.add(new Heart((fumikoHud.width+2)*2 + (13*i), 3));
@@ -87,7 +83,8 @@ public class PlayState extends FlxState
 		hud.add(fumikoHud);
 		hud.add(score);
 		hud.setAll("scrollFactor", new FlxPoint(0,0));
-				
+
+		add(backGround);
 		add(bullets);
 		add(_coins);
 		add(_level);
@@ -135,10 +132,33 @@ public class PlayState extends FlxState
 		
 		// Hud stuff
 		score.setText(FlxG.score + "0");
+		// Colliding with Enemy
+		if( FlxG.collide(player, _enemies) && !player.getFlickering()){
+			fumikoHurt(20);
+		}
 	}
 	
-	public FlxGroup getBullet(){
-		return bullets;
+	public FlxGroup getBullet(){ return bullets; }
+	
+	public Fumiko getPlayer(){ return player; }
+	
+	private void fumikoHurt(int damage){
+		player.hurt(damage);
+		
+		if (player.getHealth() == 0 ){
+			player.kill();
+			player.reset(player.x, player.y);
+			player.flicker(2);
+						
+			if (player.getLives() == 1)
+				gameOver();
+			else
+				player.reduceLives(1);
+		}
+	}
+	
+	private void gameOver(){
+		
 	}
 	
 	/**
