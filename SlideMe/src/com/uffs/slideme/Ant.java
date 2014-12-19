@@ -12,6 +12,8 @@ public class Ant extends Mob
 		addAnimation("walking", new int[] {1, 2}, 2, true);
 		addAnimation("attaking", new int[] {3}, 1);
 		
+		drag.x = 200;
+		
 		play("walking");
 		
 		kill(); // Ants will be enemies, an FlxGroup will handle it
@@ -23,5 +25,6 @@ public class Ant extends Mob
 		super.update();
 		
 		acceleration.y = 120;
+		velocity.x = 12;
 	}
 }

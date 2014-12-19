@@ -1,6 +1,7 @@
 package com.uffs.slideme;
 
 import org.flixel.*;
+
 import java.util.Random;
 import org.flixel.event.IFlxCollision;
 import org.flixel.ui.FlxVirtualPad;
@@ -49,6 +50,7 @@ public class PlayState extends FlxState
 		}
 		
 		_coins = new FlxGroup(30);
+		_enemies = new FlxGroup(30);
 		
 		// Setup Camera and Screen Following
 		FlxG.camera.follow(player);
@@ -68,6 +70,7 @@ public class PlayState extends FlxState
 		
 		add(background);
 		add(_coins);
+		add(_enemies);
 		add(bullets);
 		add(_level);
 		add(player);
@@ -89,15 +92,33 @@ public class PlayState extends FlxState
 		if (player.getScreenXY().y > FlxG.height / 4 && _level.countDead() > 0) {
 			generateBlock(); // Generate a new block
 			generateCoin(); // Generate random coins
+			generateEnemies(); // Generate random enemies
 		}		
 		
 		FlxG.collide(_level, player);
-		FlxG.collide(_level, bullets, new IFlxCollision()
+		FlxG.collide(_enemies, _level);
+		
+		// Don't let the bullet pass per ground 
+		FlxG.overlap(_level, bullets, new IFlxCollision()
 		{	
 			@Override
 			public void callback(FlxObject levelTile, FlxObject bullet)
 			{
 				bullet.kill();
+			}
+		});
+		
+		// Killing enemies
+		FlxG.overlap(_enemies, bullets, new IFlxCollision()
+		{
+			@Override
+			public void callback(FlxObject enemy, FlxObject bullet)
+			{
+				if (enemy instanceof Ant && bullet instanceof Pencil) {
+					FlxG.score += 10;
+					enemy.kill();
+					bullet.kill();
+				}
 			}
 		});
 		
@@ -117,9 +138,11 @@ public class PlayState extends FlxState
 		});		
 		
 		// Colliding with Enemy
-		if( FlxG.collide(player, _enemies) && !player.getFlickering()){
-			FlxG.score++;
-			player.reduceHealth(10);
+		if(!player.getFlickering()){
+			if (FlxG.collide(player, _enemies)){
+                player.reduceHealth(10);
+    			FlxG.score++;
+            }
 		}
 		
 		// Reducing Lives
@@ -141,10 +164,6 @@ public class PlayState extends FlxState
 	public FlxGroup getBullet(){ return bullets; }
 	
 	public Fumiko getPlayer(){ return player; }
-	
-	private void fumikoHurt(int l){
-		player.reduceHealth(l);
-	}
 	
 	private void gameOver(){
 		FlxG.switchState(new GameOver());
@@ -223,6 +242,22 @@ public class PlayState extends FlxState
 		if (placeCoin) {
 			Coin coin = (Coin) _coins.recycle(Coin.class);
 			coin.reset(_lastGeneratedX, workspaceY);
+		}
+	}
+	
+	/**
+	 * Generate a coin over the tiles
+	 */
+	protected void generateEnemies()
+	{
+		int workspaceY = _lastGeneratedY - 32;
+		Random rnd = new Random();
+		
+		boolean placeEnemy = rnd.nextInt(100) >= 90; // 10%
+		
+		if (placeEnemy) {
+			Ant enemy = (Ant) _enemies.recycle(Ant.class);
+			enemy.reset(_lastGeneratedX, workspaceY);
 		}
 	}
 }
