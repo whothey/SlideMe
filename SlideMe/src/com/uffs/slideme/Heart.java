@@ -10,16 +10,18 @@ public class Heart extends FlxSprite {
 		super(posX, posY);
 		loadGraphic("heart.png", true, false, 13, 11);
 		addAnimation("full", new int[]{0});
-		addAnimation("half", new int[]{1});
+		// Lives will not be represented by a half heart
+		// addAnimation("half", new int[]{1});
 		addAnimation("empty", new int[]{2});
+		state = "full";
 	}
 	
 	public String getState(){ return state; };
 	
-	public void reduceLives(){
+	public void reduceLive(){
 		if (state == "full")
-//			state = "half";
-//		else if (state == "half")
+			// state = "half";
+		// else if (state == "half")
 			state = "empty";
 	}
 	

@@ -10,28 +10,27 @@ public class Hud extends FlxGroup {
 	
 	private FlxSprite fumikoHud, healthBar;
 	private FlxText score;
-	private int lifes, lifesBefore;
-	private float playerHealth;
-	private Heart[] lives;
+	private Heart[] hearts;
+	private Fumiko player;
 	
-	public Hud(){
-		// Image of Fumiko and setting on Right-top corner
+	public Hud(Fumiko player){
+		
+		this.player = player;
+		
+		// Image of Fumiko set on Right-top corner
 		fumikoHud = new FlxSprite(2,2).loadGraphic("fumiko_hud.png");
 		
-		// Images of Hearts who represents the players's lives
-		lifes = (int)((PlayState)FlxG.getState()).getPlayer().getMaxLives();
-		lifesBefore = lifes;
-		lives = new Heart[lifes];
-		for (int i=0; i<lifes; i++){
-			lives[i] = new Heart(fumikoHud.width+2 + 13*i,2);
-			add(lives[i]);
+		// Images of Hearts that represents the players's lives
+		hearts = new Heart[player.getMaxLives()];
+		for (int i=0; i<player.getMaxLives(); i++){
+			hearts[i] = new Heart(fumikoHud.width+7 + 13*i,5);
+			add(hearts[i]);
 		}
 		
-		// Bar to show the player's health
-		playerHealth = (int)((PlayState)FlxG.getState()).getPlayer().getHealth();
-		healthBar = new FlxSprite(fumikoHud.width + 2, 13+2);
+		// Player's health bar
+		healthBar = new FlxSprite(fumikoHud.width + 7, 13+10);
 				
-		// Text to show the score
+		// Score
 		score = new FlxText(FlxG.width/4, 0, FlxG.width/2);
 		score.setSize(20);
 		score.setAlignment("center");
@@ -42,20 +41,16 @@ public class Hud extends FlxGroup {
 		setAll("scrollFactor", new FlxPoint(0,0));
 	}
 	
-	@Override
-	public void update(){
-		super.update();
+	public void updateHud(){
+		// Update the score points shown
+				score.setText(FlxG.score + "");
 		
 		// Update the health bar's size 
-		healthBar.makeGraphic((int)playerHealth, 7, 0xffff0000);
-		
-		// Update the score points shown
-		score.setText(FlxG.score + "");
-		
+		healthBar.makeGraphic(player.getHealth()+1, 7, 0xffff0000);
+				
 		// Update the heart's image
-		lifes = (int)((PlayState)FlxG.getState()).getPlayer().getLives();
-		for (int i=lifesBefore-1; lifes < i; i--){
-			lives[i].reduceLives();
+		for (int i=player.getMaxLives()-1; player.getLives() < i; i--){
+			hearts[i].reduceLive();
 		}
 	}
 }

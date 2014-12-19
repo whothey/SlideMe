@@ -8,21 +8,29 @@ import org.flixel.ui.FlxVirtualPad;
 public class PlayState extends FlxState
 {
 	private FlxVirtualPad _pad;
-	private FlxGroup _coins, bullets;
+	private FlxGroup _coins, bullets, _enemies;
 	private Fumiko player;
-	private FlxSprite box, background;
+	private FlxSprite background;
 	private Hud hud;
-	private Ant enemy;
 	private FlxGroup _level;
 	private String _terrain = "terrain.png";
-		
+	private FlxText gameOver;
+	
+	// Level generating vars
+	private int _lastGeneratedY;
+	private int _lastGeneratedX;
+	private int _lastBlockIteration;
+	private int [] _nextBlankSpaces;
+	
 	@Override
 	public void create()
 	{
 		int i;
-		
-		// Remove after
-		enemy = new Ant(3,0);
+
+		// Starts at bottom of the screen
+		_lastGeneratedY = FlxG.height;
+		_lastGeneratedX = 0;
+		_nextBlankSpaces  = new int[] {128}; 
 		
 		// Setup Stuff
 		_pad = new FlxVirtualPad(FlxVirtualPad.LEFT_RIGHT, FlxVirtualPad.A_B);
@@ -32,18 +40,21 @@ public class PlayState extends FlxState
 		player.setMaxLives(4);
 		player.setLives(2);
 			
-		box = new FlxSprite(0, FlxG.height - 30);
-		box.makeGraphic(400, 30);
-		box.immovable = true;
+		// Generate level tiles, during update they will be placed in proper places
+		_level = new FlxGroup(60);
+		for (i = 0; i < 60; i++) {
+			FlxTileblock t = new FlxTileblock(0, 0, 32, 32);
+			t.loadTiles(_terrain);
+			t.kill();
+			_level.add(t);
+		}
 		
-		_level = new FlxGroup();
-		generateLevel();
-		_level.setAll("immovable", true);
+		_coins = new FlxGroup(30);
 		
 		// Setup Camera and Screen Following
 		FlxG.camera.follow(player);
 		// TOP_DOWN without "x" scrolling 
-		FlxG.camera.deadzone = new FlxRect(0, FlxG.height / 2, FlxG.width, 0);
+		FlxG.camera.deadzone = new FlxRect(-FlxG.width, 0, FlxG.width * 4, FlxG.height / 2);
 		
 		bullets = new FlxGroup();
 		for (i=0; i<20; i++){
@@ -54,15 +65,17 @@ public class PlayState extends FlxState
 		background.scrollFactor = new FlxPoint(0,0);
 		
 		// Setup HUD
-		hud = new Hud();
+		hud = new Hud(player);
 		
 		add(background);
-		add(bullets);
 		add(_coins);
-		// add(box);
-		add(player);
+		add(bullets);
 		add(_level);
+		add(player);
 		add(hud);
+		gameOver = new FlxText(FlxG.width/4,FlxG.height/2,FlxG.width/2);
+		gameOver.setAlignment("center");
+		add(gameOver);
 				
 		// Add the pad for last, so it will be in the top-most layer
 		add(_pad);
@@ -72,100 +85,146 @@ public class PlayState extends FlxState
 	public void update()
 	{
 		super.update();
+		hud.updateHud();
 		
-		//FlxG.collide(player, box);
-		FlxG.collide(player, _level);
+		// Level generation
+		killPassedBlocks();
+		if (player.getScreenXY().y > FlxG.height / 4 && _level.countDead() > 0) {
+			generateBlock(); // Generate a new block
+			generateCoin(); // Generate random coins
+		}		
+		
+		FlxG.collide(_level, player);
+		FlxG.collide(_level, bullets, new IFlxCollision()
+		{	
+			@Override
+			public void callback(FlxObject levelTile, FlxObject bullet)
+			{
+				bullet.kill();
+			}
+		});
 		
 		// Collecting Coins
 		FlxG.overlap(_coins, player, new IFlxCollision()
 		{
 			@Override
-			public void callback(FlxObject coin, FlxObject player) {
+			public void callback(FlxObject coin, FlxObject player)
+			{
 				if (coin instanceof Coin && player instanceof Fumiko) {
 					FlxG.score ++;
+					// player.reduceHealth(10); // ERROR??
 					fumikoHurt(10);
 					coin.kill();
 				}
 			}
-		});
+		});		
 		
 		// Colliding with Enemy
-		if( FlxG.collide(player, enemy) && !player.getFlickering()){
-			fumikoHurt(20);
+		if( FlxG.collide(player, _enemies) && !player.getFlickering()){
+			player.reduceHealth(10);
 		}
 		
 		// Reducing Lives
 		if (player.getHealth() == 0 ){
+			player.reduceLives(1);
 			player.kill();
 			player.reset(player.x, player.y);
-			player.flicker(2);
-						
-			if (player.getLives() == 1)
-				gameOver();
-			else
-				player.reduceLives(1);
+			player.setHealth(player.getMaxHealth());
+			player.flicker(3);
+			FlxG.vibrate(200);
 		}
+		
+		if (player.getLives() == 0)
+			gameOver();
 	}
-	
+			
 	public FlxGroup getBullet(){ return bullets; }
 	
 	public Fumiko getPlayer(){ return player; }
 	
-	private void fumikoHurt(int damage){
-		player.hurt(damage);
-		
-		/*
-		if (player.getHealth() == 0 ){
-			player.kill();
-			player.reset(player.x, player.y);
-			player.flicker(2);
-						
-			if (player.getLives() == 1)
-				gameOver();
-			else
-				player.reduceLives(1);
-		}
-		*/
+	private void fumikoHurt(int l){
+		player.reduceHealth(l);
 	}
 	
 	private void gameOver(){
+		FlxG.vibrate(1500);
+		gameOver.setText("GAME OVER!");
 		
-	}
-	
-	protected void generateLevel()
-	{
-		generateStepLine(0, FlxG.height, 2);
 	}
 	
 	/**
-	 * We can put up to 12 tiles of step, so we need to generate where from these 12 tiles
-	 * will have blank spaces
-	 * 
-	 * @param x
-	 * @param y
+	 * Iterates over update() and checks if a block is out of screen from the top, if so, kill it.
+	 * We will be incrementing an iterator helper named '_lastBlockIteration' for each update until
+	 * '_level' group reach its maximum.
+	 * This method is faster than calling update() for each block in group. 
 	 */
-	protected void generateStepLine(int x, int y, int emptySpaces)
+	protected void killPassedBlocks()
+	{	
+		if (++_lastBlockIteration == _level.getMaxSize()) _lastBlockIteration = 0;
+		
+		FlxTileblock t = (FlxTileblock) _level.members.get(_lastBlockIteration);
+		if (t instanceof FlxTileblock && (t.getScreenXY().y + t.height < 0)) {
+			t.kill();
+		}
+	}
+	
+	/**
+	 * Try to generate a new line with tiles, and only generates if has any block in '_level' that is 'killed'.
+	 */
+	protected void generateBlock()
 	{
-		Random rnd = new Random();
-		int[] emptyPlaces = new int[emptySpaces];
+		boolean isBlankSpace = false, newLine = false;
 		
-		for (int i = 0; i < emptySpaces; i++)
-			emptyPlaces[i] = rnd.nextInt(12);
-		
-		for (int i = 0; i < 12; i++) {
-			boolean isEmptySpace = false;
-			
-			for (int j = 0; j < emptyPlaces.length; j++) {
-				if (emptyPlaces[j] == i) isEmptySpace = true;
-			}
-			
-			if (isEmptySpace) continue;
-			
-			FlxTileblock t = new FlxTileblock(x + (i * 32), y, 32, 32);
-			t.loadTiles(_terrain);
-			_level.add(t);
-			
+		// Check if current X should be a blank space
+		for (int i = 0; i < _nextBlankSpaces.length; i++) {
+			if (_lastGeneratedX == _nextBlankSpaces[i]) isBlankSpace = true;
 		}
 		
+		if (!isBlankSpace) {
+			// Load an available tile
+			FlxTileblock d = (FlxTileblock) _level.getFirstAvailable();
+			
+			if (d instanceof FlxTileblock) { // d can be null if none is available
+				d.reset(_lastGeneratedX, _lastGeneratedY); // Put in place
+				
+				// If reached end of line
+				if ((_lastGeneratedX + 32) >= FlxG.width) {
+					newLine = true;
+					
+					// Generate new random blank spaces
+					Random rnd = new Random();
+					_nextBlankSpaces = new int[rnd.nextInt(3) + 1]; // New random blank spaces quantity
+					
+					// Blank spaces positions
+					for (int i = 0; i < _nextBlankSpaces.length; i++) {
+						_nextBlankSpaces[i] = (int) (rnd.nextInt(12) * d.width);
+					}
+				}
+			}
+		}
+		
+		_lastGeneratedX += 32; // Add an offset
+		
+		if (newLine) {
+			_lastGeneratedY += 32 * 2; // Add offset to Y
+			_lastGeneratedX = 0; // Reset X offset
+			FlxG.worldBounds.height = _lastGeneratedY;
+		}
 	}
-}
+	
+	/**
+	 * Generate a coin over the tiles
+	 */
+	protected void generateCoin()
+	{
+		int workspaceY = _lastGeneratedY - 32;
+		Random rnd = new Random();
+		
+		boolean placeCoin = rnd.nextInt(100) >= 90; // 10%
+		
+		if (placeCoin) {
+			Coin coin = (Coin) _coins.recycle(Coin.class);
+			coin.reset(_lastGeneratedX, workspaceY);
+		}
+	}
+}

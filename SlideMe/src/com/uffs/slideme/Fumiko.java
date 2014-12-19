@@ -13,7 +13,7 @@ public class Fumiko extends Mob
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
 	
-	protected boolean justShoot = false, isShooting;
+	protected boolean justShoot, isShooting, isWalking, isJumping;
 	protected float shootTime;
 	
 	public Fumiko(int x, int y, FlxVirtualPad pad)
@@ -34,7 +34,7 @@ public class Fumiko extends Mob
 		
 		play("idle");
 		
-		drag.x = 200;
+		drag.x = 350;
 		drag.y = 60;
 	}
 	
@@ -56,7 +56,7 @@ public class Fumiko extends Mob
 		if (isShooting){
 			play("shoot");
 		}else{
-			if (velocity.y < 0) {
+			if (velocity.y < 0 && isJumping) {
 				play("jumping");
 			} else if(velocity.y > 0) {
 				play("falling");
@@ -64,8 +64,9 @@ public class Fumiko extends Mob
 				play("idle");
 			} else if (isSliding()) {
 				play("sliding");
-			} else if (velocity.x != 0) {
-				play("running");
+			} else if (velocity.x != 0 && isWalking) {
+				if (isTouching(DOWN))
+					play("running");
 			} else if (isTouching(DOWN)){
 				play("idle");
 			}
@@ -78,29 +79,35 @@ public class Fumiko extends Mob
 			setFacing(RIGHT);
 			velocity.x = 100;
 			acceleration.x += drag.x;
+			isWalking = true;
 
-			if (isTouching(DOWN))
-				play("running");
+			//if (isTouching(DOWN))
+				//play("running");
 			
 		} else if (FlxG.keys.LEFT || _pad.buttonLeft.status == FlxButton.PRESSED) {
 			setFacing(LEFT);
 			velocity.x = -100;
 			acceleration.x -= drag.x;
+			isWalking = true;
 
-			if (isTouching(DOWN))
-				play("running");
-		}
+			//if (isTouching(DOWN))
+				//play("running");
+		} else isWalking = false;
 		
-		// Jumps
+		// Jump
 		if ((FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED) && isTouching(DOWN)) {
-			velocity.y = -100;
+			isJumping = true;
+			velocity.y = -150;
+		}
+		if (isTouching(DOWN)){
+			isJumping = false;
 		}
 		
 		// Shooting
 		if (shootTime > 0){
 			shootTime -= FlxG.elapsed;
 		}
-		if (shootTime<=0){
+		if (shootTime <= 0){
 			isShooting = false;
 		}
 		
@@ -126,5 +133,18 @@ public class Fumiko extends Mob
 			justShoot = true;
 			shootTime = 0.4f;
 		}
+	}
+	
+	@Override
+	public void reduceHealth(int l){
+		super.reduceHealth(l);
+		flicker(1);
+		velocity.y = -50;
+		switch (getFacing()){
+			case RIGHT: velocity.x = -50; break;
+			case LEFT: velocity.x = 50; break;
+			
+		}
+		
 	}
 }
