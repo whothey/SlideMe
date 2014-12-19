@@ -17,7 +17,7 @@ public class MenuState extends FlxState {
 	public void create() {
 		
 		FlxG.shake();
-
+		FlxG.vibrate(1200);
 		
 		backgnd = new FlxSprite(0,0).loadGraphic("background.png", false, false, FlxG.width, FlxG.height);
 		backgnd.scale = new FlxPoint(2,2);
