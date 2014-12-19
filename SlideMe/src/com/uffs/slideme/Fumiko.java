@@ -13,7 +13,7 @@ public class Fumiko extends Mob
 	protected FlxVirtualPad _pad;
 	protected FlxGroup bullets;
 	
-	protected boolean justShoot, isShooting, isWalking, isJumping;
+	protected boolean justShoot, isShooting, isWalking;
 	protected float shootTime;
 	
 	public Fumiko(int x, int y, FlxVirtualPad pad)
@@ -56,7 +56,7 @@ public class Fumiko extends Mob
 		if (isShooting){
 			play("shoot");
 		}else{
-			if (velocity.y < 0 && isJumping) {
+			if (velocity.y < 0) {
 				play("jumping");
 			} else if(velocity.y > 0) {
 				play("falling");
@@ -96,13 +96,9 @@ public class Fumiko extends Mob
 		
 		// Jump
 		if ((FlxG.keys.UP || _pad.buttonB.status == FlxButton.PRESSED) && isTouching(DOWN)) {
-			isJumping = true;
 			velocity.y = -150;
 		}
-		if (isTouching(DOWN)){
-			isJumping = false;
-		}
-		
+				
 		// Shooting
 		if (shootTime > 0){
 			shootTime -= FlxG.elapsed;
@@ -143,8 +139,6 @@ public class Fumiko extends Mob
 		switch (getFacing()){
 			case RIGHT: velocity.x = -50; break;
 			case LEFT: velocity.x = 50; break;
-			
 		}
-		
 	}
 }

@@ -5,6 +5,7 @@ import org.flixel.*;
 import java.util.Random;
 import org.flixel.event.IFlxCollision;
 import org.flixel.ui.FlxVirtualPad;
+import org.flixel.event.IFlxButton;
 
 public class PlayState extends FlxState
 {
@@ -15,6 +16,7 @@ public class PlayState extends FlxState
 	private Hud hud;
 	private FlxGroup _level;
 	private String _terrain = "terrain.png";
+	private FlxButton btnMenu;
 		
 	// Level generating vars
 	private int _lastGeneratedY;
@@ -38,7 +40,7 @@ public class PlayState extends FlxState
 		
 		player = new Fumiko(0, 0, _pad);
 		player.setMaxLives(4);
-		player.setLives(1);
+		player.setLives(player.getMaxLives());
 			
 		// Generate level tiles, during update they will be placed in proper places
 		_level = new FlxGroup(60);
@@ -62,12 +64,17 @@ public class PlayState extends FlxState
 			bullets.add(new Pencil());
 		}
 		
-		background = new FlxSprite(0,0).loadGraphic("background.png");
-		background.scrollFactor = new FlxPoint(0,0);
+		background = new FlxSprite(0,0).loadGraphic("background.png", false, false, FlxG.width, FlxG.height);
+		background.scale = new FlxPoint(2,2);
+		background.setOriginToCorner();
 		
 		// Setup HUD
 		hud = new Hud(player);
 		
+		btnMenu = new FlxButton(0,5, "Menu", new IFlxButton(){ @Override public void callback(){ backMenu(); }});
+		btnMenu.x = FlxG.width - btnMenu.width-5;
+		btnMenu.scrollFactor = new FlxPoint(0,0);
+				
 		add(background);
 		add(_coins);
 		add(_enemies);
@@ -75,6 +82,7 @@ public class PlayState extends FlxState
 		add(_level);
 		add(player);
 		add(hud);
+		add(btnMenu);
 						
 		// Add the pad for last, so it will be in the top-most layer
 		add(_pad);
@@ -83,7 +91,6 @@ public class PlayState extends FlxState
 	@Override
 	public void update()
 	{
-		FlxG.log("Lives", player.getLives());
 		super.update();
 		hud.updateHud();
 		
@@ -129,9 +136,7 @@ public class PlayState extends FlxState
 			public void callback(FlxObject coin, FlxObject player)
 			{
 				if (coin instanceof Coin && player instanceof Fumiko) {
-					FlxG.score += 10;
-					// player.reduceHealth(10); // ERROR??
-					fumikoHurt(10);
+					FlxG.score += 100;
 					coin.kill();
 				}
 			}
@@ -141,7 +146,7 @@ public class PlayState extends FlxState
 		if(!player.getFlickering()){
 			if (FlxG.collide(player, _enemies)){
                 player.reduceHealth(10);
-    			FlxG.score++;
+    			FlxG.score--;
             }
 		}
 		
@@ -152,7 +157,7 @@ public class PlayState extends FlxState
 			player.reset(player.x, player.y);
 			player.setHealth(player.getMaxHealth());
 			player.flicker(3);
-			FlxG.vibrate(200);
+			FlxG.vibrate(300);
 		}
 		
 		if (player.getLives() == 0){
@@ -167,6 +172,10 @@ public class PlayState extends FlxState
 	
 	private void gameOver(){
 		FlxG.switchState(new GameOver());
+	}
+	
+	private void backMenu(){
+		FlxG.switchState(new MenuState());
 	}
 	
 	/**
