@@ -112,7 +112,7 @@ public class PlayState extends FlxState
 		});
 		
 		// Killing enemies
-		FlxG.collide(_enemies, bullets, new IFlxCollision()
+		FlxG.overlap(_enemies, bullets, new IFlxCollision()
 		{
 			@Override
 			public void callback(FlxObject enemy, FlxObject bullet)
@@ -139,8 +139,8 @@ public class PlayState extends FlxState
 		});		
 		
 		// Colliding with Enemy
-		if( FlxG.collide(player, _enemies) && !player.getFlickering()){
-			player.reduceHealth(10);
+		if(!player.getFlickering()){
+			if (FlxG.collide(player, _enemies)) player.reduceHealth(10);			
 		}
 		
 		// Reducing Lives
