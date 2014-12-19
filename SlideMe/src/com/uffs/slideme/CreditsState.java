@@ -49,14 +49,4 @@ public class CreditsState extends FlxState {
 	{
 		FlxG.switchState(new MenuState());
 	}
-	/*
-	@Override
-	public void destroy(){
-		super.destroy();
-		credits.destroy();
-		btnBack.destroy();
-		backGround.destroy();
-	}
-	*/
-
 }

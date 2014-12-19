@@ -14,8 +14,7 @@ public class PlayState extends FlxState
 	private Hud hud;
 	private FlxGroup _level;
 	private String _terrain = "terrain.png";
-	private FlxText gameOver;
-	
+		
 	// Level generating vars
 	private int _lastGeneratedY;
 	private int _lastGeneratedX;
@@ -38,7 +37,7 @@ public class PlayState extends FlxState
 		
 		player = new Fumiko(0, 0, _pad);
 		player.setMaxLives(4);
-		player.setLives(2);
+		player.setLives(1);
 			
 		// Generate level tiles, during update they will be placed in proper places
 		_level = new FlxGroup(60);
@@ -73,10 +72,7 @@ public class PlayState extends FlxState
 		add(_level);
 		add(player);
 		add(hud);
-		gameOver = new FlxText(FlxG.width/4,FlxG.height/2,FlxG.width/2);
-		gameOver.setAlignment("center");
-		add(gameOver);
-				
+						
 		// Add the pad for last, so it will be in the top-most layer
 		add(_pad);
 	}
@@ -84,6 +80,7 @@ public class PlayState extends FlxState
 	@Override
 	public void update()
 	{
+		FlxG.log("Lives", player.getLives());
 		super.update();
 		hud.updateHud();
 		
@@ -111,7 +108,7 @@ public class PlayState extends FlxState
 			public void callback(FlxObject coin, FlxObject player)
 			{
 				if (coin instanceof Coin && player instanceof Fumiko) {
-					FlxG.score ++;
+					FlxG.score += 10;
 					// player.reduceHealth(10); // ERROR??
 					fumikoHurt(10);
 					coin.kill();
@@ -121,6 +118,7 @@ public class PlayState extends FlxState
 		
 		// Colliding with Enemy
 		if( FlxG.collide(player, _enemies) && !player.getFlickering()){
+			FlxG.score++;
 			player.reduceHealth(10);
 		}
 		
@@ -134,8 +132,10 @@ public class PlayState extends FlxState
 			FlxG.vibrate(200);
 		}
 		
-		if (player.getLives() == 0)
+		if (player.getLives() == 0){
+			player.kill();
 			gameOver();
+		}
 	}
 			
 	public FlxGroup getBullet(){ return bullets; }
@@ -147,9 +147,7 @@ public class PlayState extends FlxState
 	}
 	
 	private void gameOver(){
-		FlxG.vibrate(1500);
-		gameOver.setText("GAME OVER!");
-		
+		FlxG.switchState(new GameOver());
 	}
 	
 	/**

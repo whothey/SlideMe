@@ -1,24 +1,25 @@
 package com.uffs.slideme;
 
 import org.flixel.*;
-
 import org.flixel.event.IFlxButton;
+import com.badlogic.gdx.utils.IntArray;
 
 public class MenuState extends FlxState {
 
 	private FlxSprite backgnd;
-	private FlxText title;
-	private FlxText footer;
-	private FlxButton btnPlay;
-	private FlxButton btnCredits;
-	
-	
+	private FlxText title, footer;
+	private FlxButton btnPlay, btnCredits;
+	private FlxSave gameSave;
+		
 	@Override
 	public void create() {
 		
 		FlxG.shake();
 		FlxG.vibrate(1200);
 		
+		gameSave = new FlxSave();
+		gameSave.bind("SlidemeSave");
+				
 		backgnd = new FlxSprite(0,0).loadGraphic("background.png", false, false, FlxG.width, FlxG.height);
 		backgnd.scale = new FlxPoint(2,2);
 		backgnd.setOriginToCorner();
@@ -47,27 +48,28 @@ public class MenuState extends FlxState {
 		btnCredits.x = FlxG.width/2 - btnCredits.width/2;
 		btnCredits.y = FlxG.height/2 + btnPlay.height + 5;
 		add(btnCredits);
-		
 	}
 		
-	public void ClickPlay()
-	{
+	public void ClickPlay(){
 		FlxG.switchState(new PlayState());
 	}
 	
-	public void ClickCredits()
-	{
+	public void ClickCredits(){
 		FlxG.switchState(new CreditsState());
 	}
-	/*
-	public void destroy(){
-		super.destroy();
-		backgnd.destroy();
-		title.destroy();
-		footer.destroy();
-		btnPlay.destroy();
-		btnCredits.destroy();
+	
+	private void onSave(){
+		IntArray scores;
+		// Fumiko player;
+		
+		// Don't have a save
+		if (gameSave.data.get("scores", IntArray.class) == null){
+			// Instantiate the local data with the save data
+			scores = FlxG.scores;
+			// Make a save to keep the data for closing game before Game Over
+		} // Have a save
+		else {
+			
+		}
 	}
-	*/
-
 }

@@ -13,7 +13,7 @@ public class MainState extends FlxState
 	public void create()
 	{
 		logo = new FlxText(0, 0, 200, "SlideMe");
-		logo.setSize(20);
+		logo.setSize(30);
 		logo.setAlignment("center");
 		logo.x = FlxG.width / 2 - logo.width / 2;
 		logo.y = FlxG.height / 2 - logo.height / 2;

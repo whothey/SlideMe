@@ -49,8 +49,8 @@ public class Hud extends FlxGroup {
 		healthBar.makeGraphic(player.getHealth()+1, 7, 0xffff0000);
 				
 		// Update the heart's image
-		for (int i=player.getMaxLives()-1; player.getLives() < i; i--){
-			hearts[i].reduceLive();
+		for (int i=player.getMaxLives(); player.getLives() < i; i--){
+			hearts[i-1].reduceLive();
 		}
 	}
 }
